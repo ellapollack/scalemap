@@ -12,7 +12,7 @@ struct ScaleMap
            pow(max(scale), floor((note - baseNote - 1) / scale.length));
   }
 
-  void applySCL(std::string scl)
+  void loadSCL(std::string scl)
   {
     int lineStart = 0;
     for (int i=0; i<scl.length; ++i)
@@ -25,7 +25,7 @@ struct ScaleMap
     }
   }
 
-  void applyKBM(std::string kbm)
+  void loadKBM(std::string kbm)
   {
     int lineStart = 0;
     for (int i=0; i<scl.length; ++i)
