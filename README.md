@@ -1,6 +1,6 @@
 ## Currently under development
 
-Supports loading of Scala [SCL](http://www.huygens-fokker.org/scala/scl_format.html) and [KBM](http://www.huygens-fokker.org/scala/help.htm#mappings) files.
+Will support loading of Scala [SCL](http://www.huygens-fokker.org/scala/scl_format.html) and [KBM](http://www.huygens-fokker.org/scala/help.htm#mappings) files.
 
 ```cpp
 #include <scalemap.cpp>
