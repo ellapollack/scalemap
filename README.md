@@ -1,11 +1,11 @@
 # `ScaleMap`
-is a **C** library
+is a single-header **C** library
 for creating `double[]` **musical scales** and using them to map `int` **notes** to `double` **frequencies**.
 
 ### It defines just 2 functions:
 
 ### 1. `double noteToFreq(int note, double* scale, int scaleLength)`
-Returns the frequency of `note` (which is `1.` if `note==0`) according to a `scale` with `scaleLength` degrees.
+Returns the frequency of `note` (`1.` for `note==0`) according to a `scale` with `scaleLength` degrees.
 
 - `note` is any `int`, with `0` being the start of the scale.
 - `scale` points to the first element of a `double[]` **musical scale**, which contains `scaleLength` frequency ratios to be repeated over frequency space every factor of `scale[scaleLength-1]`.
@@ -13,7 +13,7 @@ Returns the frequency of `note` (which is `1.` if `note==0`) according to a `sca
 ### 2. `int setScaleFromString(double** scalePtr, char* string)`
 Parses `string` into a `double[]` **musical scale**, sets `*scalePtr` to point to it, and returns its length.
 - `scalePtr` should point to a `double[]` which is either `NULL` or pointing to a previously [allocated](https://en.cppreference.com/w/c/memory) block of memory.
-- `string` should contain solely newline-separated [C-style math expressions](https://codeplea.com/tinyexpr).
+- `string` should contain solely newline-separated *C-style math expressions* (parsed by [TinyExpr](https://codeplea.com/tinyexpr)).
 - Be sure to call `free(*scalePtr)` sometime afterwards to prevent a memory leak.
 - Not thread-safe (uses static variables).
 
@@ -49,8 +49,11 @@ int main() {
   free(scale);
 }
 ```
-when compiled with `gcc demo.c tinyexpr.c` and run, prints:
+In Terminal:
 ```console
+$ gcc demo.c -o demo
+$ ./demo
+
 A440 12-tone equal temperament
 note 60 : 261.625565 Hz
 note 61 : 277.182631 Hz
@@ -81,11 +84,3 @@ note 70 : 455.111111 Hz
 note 71 : 486.000000 Hz
 note 72 : 512.000000 Hz
 ```
-
-### To use it in your C project:
-
-1. Download `tinyexpr.h` and `tinyexpr.c` from the [TinyExpr](https://codeplea.com/tinyexpr) C library.
-2. Download `scalemap.h` from this repository.
-3. Place `tinyexpr.h` and `scalemap.h` in your `#include` search path
-4. Link `tinyexpr.c` in your build process.
-5. Add `#include "scalemap.h"` to your project source.
