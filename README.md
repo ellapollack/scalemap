@@ -1,76 +1,89 @@
 # `ScaleMap`
-is a C++ class which converts note numbers to frequencies, based on a user-definable musical scale.
+is a **C** library
+for creating `double[]` **musical scales** and using them to map `int` **notes** to `double` **frequencies**.
 
-Add `ScaleMap` to your project with
+### It defines just 2 functions:
 
-```cpp
+### 1. `double noteToFreq(int note, double* scale, int scaleLength)`
+
+- `note` is any `int`, with `0` being the start of the scale.
+- `scale` points to the first element of a `double[]` **musical scale**, which contains `scaleLength` frequency ratios to be repeated over frequency space with interval `scale[scaleLength-1]`.
+- Returns the frequency of `note`, which is `1.` if `note==0`.
+
+### 2. `int setScaleFromString(double** scalePtr, char* string)`
+Parses `string` into a `double[]` **musical scale**, sets `*scalePtr` to point to it, and returns its length.
+- `scalePtr` should point to a `double[]` which is either `NULL` or pointing to a previously [allocated](https://en.cppreference.com/w/c/memory) block of memory.
+- `string` should contain solely newline-separated [C-style math expressions](https://codeplea.com/tinyexpr).
+- Be sure to call `free(*scalePtr)` sometime afterwards to prevent a memory leak.
+- Not thread-safe (uses static variables).
+
+`demo.c`:
+```c
+#include <stdio.h>
 #include "scalemap.h"
+
+int main() {
+  //===========================================================================
+  printf("\nA440 12-tone equal temperament\n");
+  int baseNote = 69;
+  double baseFreq = 440.;
+  double* scale = NULL;
+  int scaleLength = setScaleFromString(&scale, "2^(1/12)");
+
+  for (int note=60; note<=72; ++note)
+  printf("note %d : %f Hz\n",
+         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+  //===========================================================================    
+  printf("\nA432 Pythagorean tuning\n");
+  baseNote = 60;
+  baseFreq = 256.;
+  scaleLength = setScaleFromString(&scale,
+  "256/243\n9/8\n32/27\n81/64\n4/3\n729/512\n3/2\n128/81\n27/16\n16/9\n243/128\n2");
+
+  for (int note=60; note<=72; ++note)
+  printf("note %d : %f Hz\n",
+         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+  //===========================================================================  
+  free(scale);
+}
 ```
-
-By default, it uses [A440 12-tone equal temperament](https://en.wikipedia.org/wiki/Equal_temperament).
-
-```cpp
-ScaleMap sm;
-
-for (int note=60; note<72; ++note)
-  cout << note << " : " << sm.noteToFreq(note) << "\n";
-```
+when compiled with `gcc demo.c tinyexpr.c` and run, prints:
 ```console
-60 : 261.626
-61 : 277.183
-62 : 293.665
-63 : 311.127
-64 : 329.628
-65 : 349.228
-66 : 369.994
-67 : 391.995
-68 : 415.305
-69 : 440
-70 : 466.164
-71 : 493.883
-```
-To load a new scale, call `fromString(std::string scale)`, with `scale` in the following format:
-```
-baseNote : baseFreq
-freqRatio1
-freqRatio2
-freqRatio3
-.
-.
-.
-freqRatioOctave
-```
+A440 12-tone equal temperament
+note 60 : 261.625565 Hz
+note 61 : 277.182631 Hz
+note 62 : 293.664768 Hz
+note 63 : 311.126984 Hz
+note 64 : 329.627557 Hz
+note 65 : 349.228231 Hz
+note 66 : 369.994423 Hz
+note 67 : 391.995436 Hz
+note 68 : 415.304698 Hz
+note 69 : 440.000000 Hz
+note 70 : 466.163762 Hz
+note 71 : 493.883301 Hz
+note 72 : 523.251131 Hz
 
-- `baseNote` is an integer, and sets the note at which the scale begins.
-- `baseFreq` is a math expression, and sets the frequency of `baseNote`.
-- `freqRatioN` is a math expression, and sets the frequency ratio of the Nth scale degree.
-- The final `freqRatioN` is used as the octave.
-- All math expressions are parsed with [TinyExpr](https://codeplea.com/tinyexpr).
-- All non-newline whitespace is ignored.
-
-So for example, to load [A432 Pythagorean tuning](https://en.wikipedia.org/wiki/Pythagorean_tuning):
-
-
-```cpp
-sm.fromString("60:256\n256/243\n9/8\n32/27\n81/64\n4/3\n729/512\n3/2\n128/81\n27/16\n16/9\n243/128\n2");
-
-for (int note=60; note<72; ++note)
-  cout << note << " : " << sm.noteToFreq(note) << "\n";
-```
-```console
-60 : 256
-61 : 269.695
-62 : 288
-63 : 303.407
-64 : 324
-65 : 341.333
-66 : 364.5
-67 : 384
-68 : 404.543
-69 : 432
-70 : 455.111
-71 : 486
-
+A432 Pythagorean tuning
+note 60 : 256.000000 Hz
+note 61 : 269.695473 Hz
+note 62 : 288.000000 Hz
+note 63 : 303.407407 Hz
+note 64 : 324.000000 Hz
+note 65 : 341.333333 Hz
+note 66 : 364.500000 Hz
+note 67 : 384.000000 Hz
+note 68 : 404.543210 Hz
+note 69 : 432.000000 Hz
+note 70 : 455.111111 Hz
+note 71 : 486.000000 Hz
+note 72 : 512.000000 Hz
 ```
 
-`fromString` is *thread-safe*. Simultaneously calling `noteToFreq` in the audio thread and `fromString` in the GUI thread will not cause data races.
+### To use it in your C project:
+
+1. Download `tinyexpr.h` and `tinyexpr.c` from the [TinyExpr](https://codeplea.com/tinyexpr) C library.
+2. Download `scalemap.h` from this repository.
+3. Place `tinyexpr.h` and `scalemap.h` in your `#include` search path
+4. Link `tinyexpr.c` in your build process.
+5. Add `#include "scalemap.h"` to your project source.
