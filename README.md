@@ -5,10 +5,10 @@ for creating `double[]` **musical scales** and using them to map `int` **notes**
 ### It defines just 2 functions:
 
 ### 1. `double noteToFreq(int note, double* scale, int scaleLength)`
+Returns the frequency of `note` (which is `1.` if `note==0`) according to a `scale` with `scaleLength` degrees.
 
 - `note` is any `int`, with `0` being the start of the scale.
-- `scale` points to the first element of a `double[]` **musical scale**, which contains `scaleLength` frequency ratios to be repeated over frequency space with interval `scale[scaleLength-1]`.
-- Returns the frequency of `note`, which is `1.` if `note==0`.
+- `scale` points to the first element of a `double[]` **musical scale**, which contains `scaleLength` frequency ratios to be repeated over frequency space every factor of `scale[scaleLength-1]`.
 
 ### 2. `int setScaleFromString(double** scalePtr, char* string)`
 Parses `string` into a `double[]` **musical scale**, sets `*scalePtr` to point to it, and returns its length.
@@ -16,6 +16,8 @@ Parses `string` into a `double[]` **musical scale**, sets `*scalePtr` to point t
 - `string` should contain solely newline-separated [C-style math expressions](https://codeplea.com/tinyexpr).
 - Be sure to call `free(*scalePtr)` sometime afterwards to prevent a memory leak.
 - Not thread-safe (uses static variables).
+
+---
 
 `demo.c`:
 ```c
