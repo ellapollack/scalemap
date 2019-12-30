@@ -2,10 +2,10 @@
 is a small **C** library
 for mapping **`int` notes** to **`double` frequencies** using **`double[]` musical scales**.
 
-### It defines just 2 functions:
+### It defines 2 functions:
 
 #### `double noteToFreq(int note, double* scale, int scaleLength, int baseNote, double baseFreq)`
-**returns** the frequency of a `note`, according to a musical `scale` containing `scaleLength` frequency ratios (the last of which is the octave), beginning at `baseNote` with a frequency of `baseFreq`.
+**returns** the frequency of a `note`, according to a `scale[]` containing `scaleLength` frequency ratios (the last of which is the octave), and beginning at `baseNote` with a frequency of `baseFreq`.
 
 #### `int setScaleFromString(double** scalePtr, char* string)`
 [reallocates](https://en.cppreference.com/w/c/memory/realloc) a new `double[]` at `*scalePtr` containing the values
