@@ -1,21 +1,15 @@
-# `ScaleMap`
-is a single-header **C** library
-for creating `double[]` **musical scales** and using them to map `int` **notes** to `double` **frequencies**.
+# `scalemap`
+is a small **C** library
+for mapping **`int` notes** to **`double` frequencies** using **`double[]` musical scales**.
 
 ### It defines just 2 functions:
 
-### 1. `double noteToFreq(int note, double* scale, int scaleLength)`
-Returns the frequency of `note` (`1.` for `note==0`) according to a `scale` with `scaleLength` degrees.
+### `double noteToFreq(int note, double* scale, int scaleLength, int baseNote, double baseFreq)`
+**returns** the frequency of a `note`, according to a musical `scale` containing `scaleLength` frequency ratios (the last of which is the octave), beginning at `baseNote` with a frequency of `baseFreq`.
 
-- `note` is any `int`, with `0` being the start of the scale.
-- `scale` points to the first element of a `double[]` **musical scale**, which contains `scaleLength` frequency ratios to be repeated over frequency space every factor of `scale[scaleLength-1]`.
-
-### 2. `int setScaleFromString(double** scalePtr, char* string)`
-Parses `string` into a `double[]` **musical scale**, sets `*scalePtr` to point to it, and returns its length.
-- `scalePtr` should point to a `double[]` which is either `NULL` or pointing to a previously [allocated](https://en.cppreference.com/w/c/memory) block of memory.
-- `string` should contain solely newline-separated *C-style math expressions* (parsed by [TinyExpr](https://codeplea.com/tinyexpr)).
-- Be sure to call `free(*scalePtr)` sometime afterwards to prevent a memory leak.
-- Not thread-safe (uses static variables).
+### `int setScaleFromString(double** scalePtr, char* string)`
+[reallocates]((https://en.cppreference.com/w/c/memory/realloc)) a new `double[]` at `*scalePtr` containing the values
+specified by a `string` of newline-separated math expressions (parsed by [TinyExpr](https://codeplea.com/tinyexpr)), and **returns** its length.
 
 ---
 
@@ -34,7 +28,7 @@ int main() {
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
   //===========================================================================    
   printf("\nA432 Pythagorean tuning\n");
   baseNote = 60;
@@ -44,14 +38,14 @@ int main() {
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
   //===========================================================================  
   free(scale);
 }
 ```
 In Terminal:
 ```console
-$ gcc demo.c -o demo
+$ gcc demo.c tinyexpr.c -o demo
 $ ./demo
 
 A440 12-tone equal temperament

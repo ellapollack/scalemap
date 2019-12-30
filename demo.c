@@ -3,7 +3,7 @@
 
 int main() {
   //===========================================================================
-  printf("\nA440 12-tone equal temperament\n");
+  printf("A440 12-tone equal temperament\n");
   int baseNote = 69;
   double baseFreq = 440.;
   double* scale = NULL;
@@ -11,7 +11,7 @@ int main() {
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
   //===========================================================================
   printf("\nA432 Pythagorean tuning\n");
   baseNote = 60;
@@ -21,7 +21,7 @@ int main() {
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, baseFreq * noteToFreq(note - baseNote, scale, scaleLength));
+         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
   //===========================================================================
   free(scale);
 }
