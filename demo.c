@@ -2,26 +2,40 @@
 #include "scalemap.h"
 
 int main() {
-  //===========================================================================
-  printf("A440 12-tone equal temperament\n");
-  int baseNote = 69;
-  double baseFreq = 440.;
-  double* scale = NULL;
-  int scaleLength = setScaleFromString(&scale, "2^(1/12)");
+
+  Tuning* tuning;
+
+  //============================================================
+
+  printf("\nA440 12-tone equal temperament\n");
+  tuning = tuningFromString("69:440\n2^(1/12)");
 
   for (int note=60; note<=72; ++note)
-  printf("note %d : %f Hz\n",
-         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
-  //===========================================================================
+    printf("note %d : %f Hz\n", note, noteToFreq(note, tuning));
+
+  free(tuning);
+
+  //============================================================
+
   printf("\nA432 Pythagorean tuning\n");
-  baseNote = 60;
-  baseFreq = 256.;
-  scaleLength = setScaleFromString(&scale,
-  "256/243\n9/8\n32/27\n81/64\n4/3\n729/512\n3/2\n128/81\n27/16\n16/9\n243/128\n2");
+  tuning = tuningFromString("60:256\n"
+                            "256/243\n"
+                            "9/8\n"
+                            "32/27\n"
+                            "81/64\n"
+                            "4/3\n"
+                            "729/512\n"
+                            "3/2\n"
+                            "128/81\n"
+                            "27/16\n"
+                            "16/9\n"
+                            "243/128\n"
+                            "2");
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
-  //===========================================================================
-  free(scale);
+         note, noteToFreq(note, tuning));
+
+  free(tuning);
+
 }

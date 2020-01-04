@@ -1,14 +1,14 @@
 /*
 
-███████  ██████  █████  ██      ███████ ███    ███  █████  ██████
-██      ██      ██   ██ ██      ██      ████  ████ ██   ██ ██   ██
-███████ ██      ███████ ██      █████   ██ ████ ██ ███████ ██████
-     ██ ██      ██   ██ ██      ██      ██  ██  ██ ██   ██ ██
-███████  ██████ ██   ██ ███████ ███████ ██      ██ ██   ██ ██
+ ███████  ██████  █████  ██      ███████ ███    ███  █████  ██████
+ ██      ██      ██   ██ ██      ██      ████  ████ ██   ██ ██   ██
+ ███████ ██      ███████ ██      █████   ██ ████ ██ ███████ ██████
+      ██ ██      ██   ██ ██      ██      ██  ██  ██ ██   ██ ██
+ ███████  ██████ ██   ██ ███████ ███████ ██      ██ ██   ██ ██
 
- note-to-frequency mapping in any musical scale.
+  note-to-frequency mapping in any musical scale.
 
-By Max Pollack
+by Max Pollack
 maxis.cool
 
 */
@@ -19,38 +19,58 @@ maxis.cool
 #include <string.h>
 #include "tinyexpr.h"
 
-double noteToFreq(int note, double* scale, int scaleLength, int baseNote, double baseFreq) {
+typedef struct {
+  int baseNote;
+  double baseFreq;
+  size_t scaleSize;
+  double scale[1];
+} Tuning;
 
-  note -= 1 + baseNote;
+double noteToFreq(int note, const Tuning* tuning) {
 
-  if (scale == NULL || scaleLength <= 0) return 1.;
+  note -= 1 + tuning->baseNote;
+  int scaleSize = (int) tuning->scaleSize;
 
-  int degree = note % scaleLength;
-  if (degree<0) degree += scaleLength; // true modulo
+  int degree = note % scaleSize;
+  if (degree<0) degree += scaleSize; // true modulo
 
-  return scale[degree] * baseFreq *
-    pow(scale[scaleLength-1], (note-degree) / scaleLength);
+  return tuning->scale[degree] * tuning->baseFreq *
+           pow(tuning->scale[scaleSize-1],
+         (note-degree) / scaleSize);
 }
 
-int setScaleFromString(double** scalePtr, char* string) {
-  static int degree = 0;
-  static int scaleLength;
-  char* stringCopy = string ? strdup(string) : NULL;
-  char* line;
-  double freqRatio;
+Tuning* tuningFromString(const char* str) {
 
-  if ((line = strtok(stringCopy, "\n")) &&
-      !isnan(freqRatio = te_interp(line, 0))) {
-    degree++;
-    setScaleFromString(scalePtr, NULL);
-    if (*scalePtr) (*scalePtr)[--degree] = freqRatio;
+  Tuning* tuning = NULL;
+  size_t scaleSize = 1;
+
+  char* strCopy = str ? strdup(str) : NULL;
+  char* line;
+
+  if (strCopy &&
+      (line = strtok(strCopy, ":")) &&
+      !isnan(te_interp(line, 0)) &&
+      (line = strtok(NULL, "\n")) &&
+      !isnan(te_interp(line, 0)) &&
+      (line = strtok(NULL, "\n")) &&
+      !isnan(te_interp(line, 0)))
+  {
+    while ((line = strtok(NULL, "\n")) &&
+           !isnan(te_interp(line, 0)))
+      scaleSize++;
+
+    tuning = malloc(sizeof(Tuning) - 1 + sizeof(double) * scaleSize);
+
+    if (tuning)
+    {
+      strcpy(strCopy, str);
+      tuning->baseNote = te_interp(strtok(strCopy, ":"), 0);
+      tuning->baseFreq = te_interp(strtok(NULL, "\n"), 0);
+      tuning->scaleSize = scaleSize;
+      for (int degree=0; degree<scaleSize; ++degree)
+        tuning->scale[degree] = te_interp(strtok(NULL, "\n"), 0);
+    }
   }
-  else {
-    double* tmp = degree==0 ? NULL : realloc(*scalePtr, degree * sizeof(double));
-    if (tmp) *scalePtr = tmp;
-    else { free(*scalePtr); *scalePtr = NULL; }
-    free(stringCopy);
-    scaleLength = degree;
-  }
-  return scaleLength;
+  free(strCopy);
+  return tuning;
 }

@@ -1,15 +1,34 @@
 # `scalemap`
-is a small **C** library
-for mapping **`int` notes** to **`double` frequencies** using **`double[]` musical scales**.
+is a **C** library for loading + using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems).
 
-### It defines 2 functions:
+## Types
 
-#### `double noteToFreq(int note, double* scale, int scaleLength, int baseNote, double baseFreq)`
-**returns** the frequency of a `note`, according to a `scale[]` containing `scaleLength` frequency ratios (the last of which is the octave), and beginning at `baseNote` with a frequency of `baseFreq`.
+- ### `typedef struct Tuning`
 
-#### `int setScaleFromString(double** scalePtr, char* string)`
-[reallocates](https://en.cppreference.com/w/c/memory/realloc) a new `double[]` at `*scalePtr` containing the values
-specified by a `string` of newline-separated math expressions (parsed by [TinyExpr](https://codeplea.com/tinyexpr)), and **returns** its length.
+  - `int baseNote`, the note number of the *tonic*.
+  - `double baseFreq`, the frequency of the *tonic*.
+  - `size_t scaleSize`, the number of elements in `scale` (at least `1`).
+  - `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, the last of which is the *octave*.
+
+## Functions
+
+- ### `double noteToFreq(int note, Tuning* tuning)`
+  - **Returns** the frequency of a `note` according to a `tuning`.
+
+- ### `Tuning* tuningFromString(char* string)`
+  - Allocates a new `Tuning` specified by a `string` in the following format:
+
+        baseNote : baseFreq
+        scale[0]
+        .
+        .
+        .
+        scale[scaleSize-1]
+
+  - `baseNote`, `baseFreq`, and `scale[x]` are *math expressions* (parsed by [TinyExpr](https://codeplea.com/tinyexpr)).
+  - All non-newline whitespace is ignored.
+  - **Returns** a pointer to the new `Tuning`, or `NULL` if `string` is invalid.
+  - Be sure to call `free(tuning)` when you're done with it, to prevent a memory leak.
 
 ---
 
@@ -19,28 +38,42 @@ specified by a `string` of newline-separated math expressions (parsed by [TinyEx
 #include "scalemap.h"
 
 int main() {
-  //===========================================================================
+
+  Tuning* tuning;
+
+  //============================================================
+
   printf("\nA440 12-tone equal temperament\n");
-  int baseNote = 69;
-  double baseFreq = 440.;
-  double* scale = NULL;
-  int scaleLength = setScaleFromString(&scale, "2^(1/12)");
+  tuning = tuningFromString("69:440\n2^(1/12)");
 
   for (int note=60; note<=72; ++note)
-  printf("note %d : %f Hz\n",
-         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
-  //===========================================================================    
+    printf("note %d : %f Hz\n", note, noteToFreq(note, tuning));
+
+  free(tuning);
+
+  //============================================================
+
   printf("\nA432 Pythagorean tuning\n");
-  baseNote = 60;
-  baseFreq = 256.;
-  scaleLength = setScaleFromString(&scale,
-  "256/243\n9/8\n32/27\n81/64\n4/3\n729/512\n3/2\n128/81\n27/16\n16/9\n243/128\n2");
+  tuning = tuningFromString("60:256\n"
+                            "256/243\n"
+                            "9/8\n"
+                            "32/27\n"
+                            "81/64\n"
+                            "4/3\n"
+                            "729/512\n"
+                            "3/2\n"
+                            "128/81\n"
+                            "27/16\n"
+                            "16/9\n"
+                            "243/128\n"
+                            "2");
 
   for (int note=60; note<=72; ++note)
   printf("note %d : %f Hz\n",
-         note, noteToFreq(note, scale, scaleLength, baseNote, baseFreq));
-  //===========================================================================  
-  free(scale);
+         note, noteToFreq(note, tuning));
+
+  free(tuning);
+
 }
 ```
 In Terminal:
