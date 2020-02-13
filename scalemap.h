@@ -39,38 +39,44 @@ double noteToFreq(int note, const Tuning* tuning) {
          (note-degree) / scaleSize);
 }
 
-Tuning* tuningFromString(const char* str) {
+Tuning* newTuning(const char* baseNoteString,
+                  const char* baseFreqString,
+                  const char* scaleString) {
 
-  Tuning* tuning = NULL;
   size_t scaleSize = 1;
+  for (const char* ch = scaleString; *ch; ++ch) if (*ch=='\n') scaleSize++;
 
-  char* strCopy = str ? strdup(str) : NULL;
-  char* line;
+  Tuning* tuning = (Tuning*) malloc(sizeof(Tuning) - 1 + sizeof(double) * scaleSize);
 
-  if (strCopy &&
-      (line = strtok(strCopy, ":")) &&
-      !isnan(te_interp(line, 0)) &&
-      (line = strtok(NULL, "\n")) &&
-      !isnan(te_interp(line, 0)) &&
-      (line = strtok(NULL, "\n")) &&
-      !isnan(te_interp(line, 0)))
-  {
-    while ((line = strtok(NULL, "\n")) &&
-           !isnan(te_interp(line, 0)))
-      scaleSize++;
+  if (tuning) {
+    double baseNote = te_interp(baseNoteString, 0);
+    double baseFreq = te_interp(baseFreqString, 0);
 
-    tuning = malloc(sizeof(Tuning) - 1 + sizeof(double) * scaleSize);
+    tuning->baseNote = isnan(baseNote) ? 0 : round(baseNote);
+    tuning->baseFreq = isnan(baseFreq) ? 0. : baseFreq;
+    tuning->scaleSize = scaleSize;
 
-    if (tuning)
-    {
-      strcpy(strCopy, str);
-      tuning->baseNote = te_interp(strtok(strCopy, ":"), 0);
-      tuning->baseFreq = te_interp(strtok(NULL, "\n"), 0);
-      tuning->scaleSize = scaleSize;
-      for (int degree=0; degree<scaleSize; ++degree)
-        tuning->scale[degree] = te_interp(strtok(NULL, "\n"), 0);
-    }
+    if (scaleString) {
+      char* ssCopy = strdup(scaleString);
+      char* line = ssCopy;
+      char* newLine;
+
+      for (int degree=0; degree<scaleSize; ++degree) {
+        if ((newLine = strchr(line,'\n'))) {
+          *newLine = '\0';
+          tuning->scale[degree] = te_interp(line, 0);
+          if (isnan(tuning->scale[degree])) tuning->scale[degree] = 0.;
+          line = newLine + 1;
+        } else {
+          tuning->scale[degree] = te_interp(line, 0);
+          if (isnan(tuning->scale[degree])) tuning->scale[degree] = 0.;
+        }
+      }
+
+      free(ssCopy);
+    } else tuning->scale[0] = 0.;
   }
-  free(strCopy);
+
   return tuning;
+
 }

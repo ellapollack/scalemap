@@ -1,34 +1,25 @@
 # `scalemap`
 is a **C** library for loading + using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems).
 
-## Types
-
 - ### `typedef struct Tuning`
 
   - `int baseNote`, the note number of the *tonic*.
   - `double baseFreq`, the frequency of the *tonic*.
-  - `size_t scaleSize`, the number of elements in `scale` (at least `1`).
-  - `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, the last of which is the *octave*.
-
-## Functions
+  - `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
+  - `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
 - ### `double noteToFreq(int note, Tuning* tuning)`
   - **Returns** the frequency of a `note` according to a `tuning`.
 
-- ### `Tuning* tuningFromString(char* string)`
-  - Allocates a new `Tuning` specified by a `string` in the following format:
-
-        baseNote : baseFreq
-        scale[0]
-        .
-        .
-        .
-        scale[scaleSize-1]
-
-  - `baseNote`, `baseFreq`, and `scale[x]` are *math expressions* (parsed by [TinyExpr](https://codeplea.com/tinyexpr)).
+- ### `Tuning* newTuning(const char* baseNoteString, const char* baseFreqString, const char* scaleString)`
+  - Allocates a new `Tuning` specified by:
+    - `baseNoteString`, a **math expression** for `baseNote` (rounded to nearest integer).
+    - `baseFreqString`, a **math expression** for `baseFreq`.
+    - `scaleString`, a sequence of newline-separated **math expressions** for each `scale` degree.
+  - **Math expressions** are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
   - All non-newline whitespace is ignored.
-  - **Returns** a pointer to the new `Tuning`, or `NULL` if `string` is invalid.
-  - Be sure to call `free(tuning)` when you're done with it, to prevent a memory leak.
+  - **Returns** a pointer to the new `Tuning`, or `NULL` if allocation was unsuccessful.
+  - Be sure to call `free(tuning)` when you're done with it to prevent a memory leak.
 
 ---
 
@@ -44,7 +35,7 @@ int main() {
   //============================================================
 
   printf("\nA440 12-tone equal temperament\n");
-  tuning = tuningFromString("69:440\n2^(1/12)");
+  tuning = tuningFromString("69","440","2^(1/12)");
 
   for (int note=60; note<=72; ++note)
     printf("note %d : %f Hz\n", note, noteToFreq(note, tuning));
@@ -54,7 +45,7 @@ int main() {
   //============================================================
 
   printf("\nA432 Pythagorean tuning\n");
-  tuning = tuningFromString("60:256\n"
+  tuning = tuningFromString("60","256",
                             "256/243\n"
                             "9/8\n"
                             "32/27\n"
