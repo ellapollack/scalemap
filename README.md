@@ -1,73 +1,28 @@
 # `scalemap`
 is a **C** library for loading + using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems).
 
-- ### `typedef struct Tuning`
+### `typedef struct Tuning`
 
-  - `int baseNote`, the note number of the *tonic*.
-  - `double baseFreq`, the frequency of the *tonic*.
-  - `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
-  - `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, ending with the *octave*.
+- `int baseNote`, the note number of the *tonic*.
+- `double baseFreq`, the frequency of the *tonic*.
+- `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
+- `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
-- ### `double noteToFreq(int note, Tuning* tuning)`
-  - **Returns** the frequency of a `note` according to a `tuning`.
+### `double noteToFreq(int note, Tuning* tuning)`
+- **Returns** the frequency of a `note` according to a `tuning`.
 
-- ### `Tuning* newTuning(const char* baseNoteString, const char* baseFreqString, const char* scaleString)`
-  - Allocates a new `Tuning` specified by:
-    - `baseNoteString`, a **math expression** for `baseNote` (rounded to nearest integer).
-    - `baseFreqString`, a **math expression** for `baseFreq`.
-    - `scaleString`, a sequence of newline-separated **math expressions** for each `scale` degree.
-  - **Math expressions** are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
-  - All non-newline whitespace is ignored.
-  - **Returns** a pointer to the new `Tuning`, or `NULL` if allocation was unsuccessful.
-  - Be sure to call `free(tuning)` when you're done with it to prevent a memory leak.
+### `Tuning* newTuning(const char* baseNoteString, const char* baseFreqString, const char* scaleString)`
+- Allocates a new `Tuning` specified by:
+  - `baseNoteString`, a **math expression** for `baseNote` (rounded to nearest integer).
+  - `baseFreqString`, a **math expression** for `baseFreq`.
+  - `scaleString`, a sequence of newline-separated **math expressions** for each `scale` degree.
+- **Math expressions** are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
+- All non-newline whitespace is ignored.
+- **Returns** a pointer to the new `Tuning`, or `NULL` if allocation was unsuccessful.
+- Be sure to call `free(tuning)` when you're done with it to prevent a memory leak.
 
 ---
 
-`demo.c`:
-```c
-#include <stdio.h>
-#include "scalemap.h"
-
-int main() {
-
-  Tuning* tuning;
-
-  //============================================================
-
-  printf("\nA440 12-tone equal temperament\n");
-  tuning = tuningFromString("69","440","2^(1/12)");
-
-  for (int note=60; note<=72; ++note)
-    printf("note %d : %f Hz\n", note, noteToFreq(note, tuning));
-
-  free(tuning);
-
-  //============================================================
-
-  printf("\nA432 Pythagorean tuning\n");
-  tuning = tuningFromString("60","256",
-                            "256/243\n"
-                            "9/8\n"
-                            "32/27\n"
-                            "81/64\n"
-                            "4/3\n"
-                            "729/512\n"
-                            "3/2\n"
-                            "128/81\n"
-                            "27/16\n"
-                            "16/9\n"
-                            "243/128\n"
-                            "2");
-
-  for (int note=60; note<=72; ++note)
-  printf("note %d : %f Hz\n",
-         note, noteToFreq(note, tuning));
-
-  free(tuning);
-
-}
-```
-In Terminal:
 ```console
 $ gcc demo.c tinyexpr.c -o demo
 $ ./demo
