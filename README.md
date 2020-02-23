@@ -1,8 +1,7 @@
 # `scalemap`
-is a library for loading + operating [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems), which map `int` **notes** to `double` **frequencies**.
+is a library for creating and using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) in **C**, **C++**, and **JavaScript**.
 
-It uses [TinyExpr](https://codeplea.com/tinyexpr) for math expression parsing, and has bindings in **C**, **C++**, and **JavaScript** &darr;&darr;&darr;
-
+See it implemented in [Frequency Explorer](https://maxis.cool/frex).
 
 ## C
 
@@ -47,11 +46,11 @@ int main() {
 }
 ```
 
-Defines all the same functions + types as in **C**, as well as the `Tuning` convenience class.
+Defines all the same functions and types as in **C**, plus the `Tuning` convenience class:
 
 
 ### `class Tuning`
-- `Tuning(std::string baseNoteExpr, std::string baseFreqExpr, std::stringscaleExpr)`
+- `Tuning(std::string baseNoteExpr, std::string baseFreqExpr, std::string scaleExpr)`
 - `int baseNote`
 - `double baseFreq`
 - `std::vector<double> scale`
@@ -69,9 +68,15 @@ Defines all the same functions + types as in **C**, as well as the `Tuning` conv
 </script>
 ```
 
+### `parseExpr(mathExpr)`
+- **Returns** the Number result of evaluating the String `mathExpr` using [TinyExpr](https://codeplea.com/tinyexpr)*
+- If the math expression is invalid, **returns** `0`
+
+\* ported to WebAssembly with [Emscripten](https://emscripten.org)
+
 ### `class Tuning`
-- `Tuning(baseNoteExpr, baseFreqExpr, scaleExpr)`
+- `Tuning(baseNoteExpr, baseFreqExpr, scaleExpr)` (Object)
 - `baseNote` (Number)
 - `baseFreq` (Number)
 - `scale` (Array of Numbers)
-- `noteToFreq(note)`
+- `noteToFreq(note)` (Number)
