@@ -1,59 +1,77 @@
 # `scalemap`
-is a **C** library for loading + using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems).
+is a library for loading + operating [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems), which map `int` **notes** to `double` **frequencies**.
 
-### `typedef struct Tuning`
+It uses [TinyExpr](https://codeplea.com/tinyexpr) for math expression parsing, and has bindings in **C**, **C++**, and **JavaScript** &darr;&darr;&darr;
+
+
+## C
+
+```c
+#include <scalemap.h>
+
+int main() {
+  tuning t = newTuning("69","440","2^(1/12)");
+  noteToFreq(60, t); // returns 261.626
+  free(t.scale); // to prevent memory leak
+}
+```
+
+### `typedef struct tuning`
 
 - `int baseNote`, the note number of the *tonic*.
 - `double baseFreq`, the frequency of the *tonic*.
 - `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
-- `double scale[]`, a [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) containing the frequency ratio of each *scale degree*, ending with the *octave*.
+- `double* scale`, an array containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
-### `double noteToFreq(int note, Tuning* tuning)`
+### `double noteToFreq(int note, tuning tuning)`
 - **Returns** the frequency of a `note` according to a `tuning`.
 
-### `Tuning* newTuning(const char* baseNoteString, const char* baseFreqString, const char* scaleString)`
+### `tuning newTuning(const char* baseNoteExpr, const char* baseFreqExpr, const char* scaleExpr)`
 - Allocates a new `Tuning` specified by:
-  - `baseNoteString`, a **math expression** for `baseNote` (rounded to nearest integer).
-  - `baseFreqString`, a **math expression** for `baseFreq`.
-  - `scaleString`, a sequence of newline-separated **math expressions** for each `scale` degree.
-- **Math expressions** are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
-- All non-newline whitespace is ignored.
-- **Returns** a pointer to the new `Tuning`, or `NULL` if allocation was unsuccessful.
-- Be sure to call `free(tuning)` when you're done with it to prevent a memory leak.
+  - `baseNoteExpr`, a math expression for `baseNote` (rounded to nearest integer).
+  - `baseFreqExpr`, a math expression for `baseFreq`.
+  - `scaleExpr`, math expressions for each `scale` degree, separated by `\n`.
+- Math expressions are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
+- **Returns** a pointer to a new `Tuning`, or `NULL` if memory allocation was unsuccessful.
+- Be sure to call `free(tuning.scale)` when you're done with it to prevent a memory leak.
 
----
+## C++
 
-```console
-$ gcc demo.c tinyexpr.c -o demo
-$ ./demo
 
-A440 12-tone equal temperament
-note 60 : 261.625565 Hz
-note 61 : 277.182631 Hz
-note 62 : 293.664768 Hz
-note 63 : 311.126984 Hz
-note 64 : 329.627557 Hz
-note 65 : 349.228231 Hz
-note 66 : 369.994423 Hz
-note 67 : 391.995436 Hz
-note 68 : 415.304698 Hz
-note 69 : 440.000000 Hz
-note 70 : 466.163762 Hz
-note 71 : 493.883301 Hz
-note 72 : 523.251131 Hz
+```cpp
+#include <scalemap.h>
 
-A432 Pythagorean tuning
-note 60 : 256.000000 Hz
-note 61 : 269.695473 Hz
-note 62 : 288.000000 Hz
-note 63 : 303.407407 Hz
-note 64 : 324.000000 Hz
-note 65 : 341.333333 Hz
-note 66 : 364.500000 Hz
-note 67 : 384.000000 Hz
-note 68 : 404.543210 Hz
-note 69 : 432.000000 Hz
-note 70 : 455.111111 Hz
-note 71 : 486.000000 Hz
-note 72 : 512.000000 Hz
+int main() {
+  Tuning t ("69","440","2^(1/12)");
+  t.noteToFreq(60); // returns 261.626
+}
 ```
+
+Defines all the same functions + types as in **C**, as well as the `Tuning` convenience class.
+
+
+### `class Tuning`
+- `Tuning(std::string baseNoteExpr, std::string baseFreqExpr, std::stringscaleExpr)`
+- `int baseNote`
+- `double baseFreq`
+- `std::vector<double> scale`
+- `noteToFreq(int note)`
+
+## HTML/JavaScript
+
+```html
+<script src="scalemap.js"></script>
+<script>
+  Module.onRuntimeInitialized = function() { // wait for WebAssembly to initialize
+    var t  = new Tuning("69","440","2^(1/12)");
+    t.noteToFreq(60); // returns 261.626
+  }
+</script>
+```
+
+### `class Tuning`
+- `Tuning(baseNoteExpr, baseFreqExpr, scaleExpr)`
+- `baseNote` (Number)
+- `baseFreq` (Number)
+- `scale` (Array of Numbers)
+- `noteToFreq(note)`
