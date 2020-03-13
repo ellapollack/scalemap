@@ -1,5 +1,5 @@
 # `scalemap`
-is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) with accompanying code libraries in **C**, **C++**, and **JavaScript**.
+is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser, with accompanying code libraries in **C**, **C++**, and **JavaScript**.
 
 See it implemented in [Frequency Explorer](https://maxis.cool/frex).
 
