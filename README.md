@@ -1,5 +1,5 @@
 # `scalemap`
-is a library for creating and using [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) in **C**, **C++**, and **JavaScript**.
+is a code library and string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) in **C**, **C++**, and **JavaScript**.
 
 See it implemented in [Frequency Explorer](https://maxis.cool/frex).
 
