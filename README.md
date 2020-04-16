@@ -1,5 +1,5 @@
 # `scalemap`
-is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser, as well as a set of accompanying libraries in **C**, **C++**, and **JavaScript** for loading + using musical tuning strings.
+is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser, with utilities in **C**, **C++**, and **JavaScript** for loading + operating musical tunings.
 
 See it implemented in [Frequency Explorer](https://maxis.cool/frex)!
 
@@ -22,9 +22,6 @@ int main() {
 - `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
 - `double* scale`, an array containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
-### `double noteToFreq(int note, tuning tuning)`
-- **Returns** the frequency of a `note` according to a `tuning`.
-
 ### `tuning newTuning(const char* baseNoteExpr, const char* baseFreqExpr, const char* scaleExpr)`
 - Allocates a new `Tuning` specified by:
   - `baseNoteExpr`, a math expression for `baseNote` (rounded to nearest integer).
@@ -33,6 +30,9 @@ int main() {
 - Math expressions are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
 - **Returns** a pointer to a new `Tuning`, or `NULL` if memory allocation was unsuccessful.
 - Be sure to call `free(tuning.scale)` when you're done with it to prevent a memory leak.
+
+### `double noteToFreq(int note, tuning tuning)`
+- **Returns** the frequency of a `note` according to a `tuning`.
 
 ## C++
 
@@ -69,10 +69,10 @@ Defines all the same functions and types as in **C**, plus the `Tuning` convenie
 ```
 
 ### `parseExpr(mathExpr)`
-- **Returns** the Number result of evaluating the String `mathExpr` using [TinyExpr](https://codeplea.com/tinyexpr)*
+- **Returns** the Number result of parsing* the String `mathExpr`
 - If the math expression is invalid, **returns** `0`
 
-\* ported to WebAssembly with [Emscripten](https://emscripten.org)
+\*using [TinyExpr](https://codeplea.com/tinyexpr), ported to the web with [Emscripten](https://emscripten.org)
 
 ### `class Tuning`
 - `Tuning(baseNoteExpr, baseFreqExpr, scaleExpr)` (Object)
