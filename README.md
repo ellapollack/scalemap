@@ -1,8 +1,3 @@
-# `scalemap`
-is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) in **C**, **C++**, and **JavaScript**, based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser.
-
-Play around with it in [Frequency Explorer](https://maxis.cool/frex)!
-
 ## C
 
 ```c
