@@ -1,12 +1,12 @@
 # `scalemap`
-is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser, with utilities in **C**, **C++**, and **JavaScript** for loading + operating musical tunings.
+is string format for [musical tunings](https://en.wikipedia.org/wiki/Musical_tuning#Tuning_systems) in **C**, **C++**, and **JavaScript**, based on the [TinyExpr](https://codeplea.com/tinyexpr) math expression parser.
 
-See it implemented in [Frequency Explorer](https://maxis.cool/frex)!
+Play around with it in [Frequency Explorer](https://maxis.cool/frex)!
 
 ## C
 
 ```c
-#include <scalemap.h>
+#include "scalemap.h"
 
 int main() {
   tuning t = newTuning("69","440","2^(1/12)");
@@ -38,7 +38,7 @@ int main() {
 
 
 ```cpp
-#include <scalemap.h>
+#include "scalemap.h"
 
 int main() {
   Tuning t ("69","440","2^(1/12)");
