@@ -17,7 +17,7 @@ int main() {
 - `size_t scaleSize`, the number of degrees in `scale` (at least `1`).
 - `double* scale`, an array containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
-### `tuning newTuning(const char* baseNoteExpr, const char* baseFreqExpr, const char* scaleExpr)`
+### `tuning newTuning(const char* baseNote, const char* baseFreq, const char* scale)`
 - **Returns** a `tuning` specified by:
   - `baseNoteExpr`, a math expression for `baseNote` (rounded to nearest integer).
   - `baseFreqExpr`, a math expression for `baseFreq`.
