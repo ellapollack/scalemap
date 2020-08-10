@@ -18,12 +18,11 @@ int main() {
 - `double* scale`, an array containing the frequency ratio of each *scale degree*, ending with the *octave*.
 
 ### `tuning newTuning(const char* baseNoteExpr, const char* baseFreqExpr, const char* scaleExpr)`
-- Allocates a new `Tuning` specified by:
+- **Returns** a `tuning` specified by:
   - `baseNoteExpr`, a math expression for `baseNote` (rounded to nearest integer).
   - `baseFreqExpr`, a math expression for `baseFreq`.
   - `scaleExpr`, math expressions for each `scale` degree, separated by `\n`.
 - Math expressions are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
-- **Returns** a pointer to a new `Tuning`, or `NULL` if memory allocation was unsuccessful.
 - Be sure to call `free(tuning.scale)` when you're done with it to prevent a memory leak.
 
 ### `double noteToFreq(int note, tuning tuning)`
