@@ -19,9 +19,9 @@ int main() {
 
 ### `tuning newTuning(const char* baseNote, const char* baseFreq, const char* scale)`
 - **Returns** a `tuning` specified by:
-  - `baseNoteExpr`, a math expression for `baseNote` (rounded to nearest integer).
-  - `baseFreqExpr`, a math expression for `baseFreq`.
-  - `scaleExpr`, math expressions for each `scale` degree, separated by `\n`.
+  - `baseNote`, a math expression for `baseNote` (rounded to nearest integer).
+  - `baseFreq`, a math expression for `baseFreq`.
+  - `scale`, math expressions for each `scale` degree, separated by `\n`.
 - Math expressions are parsed by [TinyExpr](https://codeplea.com/tinyexpr).
 - Be sure to call `free(tuning.scale)` when you're done with it to prevent a memory leak.
 
