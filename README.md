@@ -68,7 +68,7 @@ Defines all the same functions and types as in **C**, plus the `Tuning` convenie
 Ported to WebAssembly with [Emscripten](https://emscripten.org)
 
 ### `parseExpr(mathExpr)`
-- **Returns** the Number result of parsing* the String `mathExpr` using [TinyExpr](https://codeplea.com/tinyexpr)
+- **Returns** the Number result of parsing the String `mathExpr` using [TinyExpr](https://codeplea.com/tinyexpr)
 - If the math expression is invalid, **returns** `0`
 
 ### `class Tuning`
