@@ -6,6 +6,7 @@
 int main() {
   tuning t = newTuning("69","440","2^(1/12)");
   noteToFreq(60, t); // returns 261.626
+  free(t.scale);
 }
 ```
 
