@@ -2,6 +2,8 @@
 
 *a string format for musical scales*, consisting of a sequence of newline-separated math expressions corresponding to the frequency interval of each scale degree (ending with the octave).
 
+Try it out in [Frequency Explorer](https://maxis.cool/frex).
+
 ### Examples:
 
 #### 12-tone equal temperament:
