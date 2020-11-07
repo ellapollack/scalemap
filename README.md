@@ -1,3 +1,27 @@
+# `scalemap`
+
+*a string format for musical scales*, consisting of a sequence of newline-separated math expressions corresponding to the frequency interval of each scale degree (ending with the octave).
+
+### Examples:
+
+#### 12-tone equal temperament:
+```
+2^(1/12)
+```
+
+#### 5-limit JI:
+```
+9/8
+5/4
+4/3
+3/2
+5/3
+15/8
+2
+```
+
+---
+
 ## C API
 
 ### `typedef struct tuning`
