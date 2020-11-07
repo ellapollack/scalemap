@@ -1,15 +1,5 @@
 ## C API
 
-```c
-#include "scalemap.h"
-
-int main() {
-  tuning t = newTuning("69","440","2^(1/12)");
-  noteToFreq(60, t); // returns 261.626
-  free(t.scale);
-}
-```
-
 ### `typedef struct tuning`
 
 - `int baseNote`, the note number of the *tonic*.
@@ -28,10 +18,28 @@ int main() {
 ### `double noteToFreq(int note, tuning tuning)`
 - **Returns** the frequency of a `note` according to a `tuning`.
 
+```c
+#include "scalemap.h"
+
+int main() {
+  tuning t = newTuning("69","440","2^(1/12)");
+  noteToFreq(60, t); // returns 261.626
+  free(t.scale);
+}
+```
+
 ---
 
 ## C++ API
 
+Defines all the same functions and types as in **C**, plus the `Tuning` convenience class:
+
+### `class Tuning`
+- `Tuning(std::string baseNoteExpr, std::string baseFreqExpr, std::string scaleExpr)`
+- `int baseNote`
+- `double baseFreq`
+- `std::vector<double> scale`
+- `noteToFreq(int note)`
 
 ```cpp
 #include "scalemap.h"
@@ -42,29 +50,9 @@ int main() {
 }
 ```
 
-Defines all the same functions and types as in **C**, plus the `Tuning` convenience class:
-
-
-### `class Tuning`
-- `Tuning(std::string baseNoteExpr, std::string baseFreqExpr, std::string scaleExpr)`
-- `int baseNote`
-- `double baseFreq`
-- `std::vector<double> scale`
-- `noteToFreq(int note)`
-
 ---
 
 ## JavaScript API
-
-```html
-<script src="scalemap.js"></script>
-<script>
-  Module.onRuntimeInitialized = function() { // wait for WebAssembly to initialize
-    var t  = new Tuning("69","440","2^(1/12)");
-    t.noteToFreq(60); // returns 261.626
-  }
-</script>
-```
 
 Ported to WebAssembly with [Emscripten](https://emscripten.org)
 
@@ -78,3 +66,13 @@ Ported to WebAssembly with [Emscripten](https://emscripten.org)
 - `baseFreq` (Number)
 - `scale` (Array of Numbers)
 - `noteToFreq(note)` (Number)
+
+```html
+<script src="scalemap.js"></script>
+<script>
+  Module.onRuntimeInitialized = function() { // wait for WebAssembly to initialize
+    var t  = new Tuning("69","440","2^(1/12)");
+    t.noteToFreq(60); // returns 261.626
+  }
+</script>
+```
