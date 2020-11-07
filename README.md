@@ -1,4 +1,4 @@
-## C
+## C API
 
 ```c
 #include "scalemap.h"
@@ -30,7 +30,7 @@ int main() {
 
 ---
 
-## C++
+## C++ API
 
 
 ```cpp
@@ -54,7 +54,7 @@ Defines all the same functions and types as in **C**, plus the `Tuning` convenie
 
 ---
 
-## HTML/JavaScript
+## JavaScript API
 
 ```html
 <script src="scalemap.js"></script>
