@@ -775,7 +775,6 @@ extern "C" {
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "tinyexpr.h"
 
 typedef struct {
   int baseNote;
